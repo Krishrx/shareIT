@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const ThoughtsModel = require("./models/thoughtsModel");
+const thoughtsRoutes = require("./routes/thoughtsRoutes")
 const port = 8000;
 const dbURI = process.env.MONGO_DB_URI;
 
@@ -24,35 +24,37 @@ mongoose.connect(dbURI, {
     console.log(err);
 });
 
-app.post('/', (req, res) => {
-    console.log(req.body);
-    res.send("got the data")
-})
+app.use('/thoughts', thoughtsRoutes);
+
+// app.post('/', (req, res) => {
+//     console.log(req.body);
+//     res.send("got the data")
+// })
 
 
 
-app.get("/", (req, res) => {
-    const content = new ThoughtsModel({
-        "title": "food",
-        "content": "i like dosa",
-        "isPublic": false
-    });
-    content.save().then(result => {
-        console.log('Data saved:', result);
-        res.send("data saved");
-    })
-    .catch(error => {
-        console.error('Error saving data:', error);
-    });
-})
+// app.get("/", (req, res) => {
+//     const content = new ThoughtsModel({
+//         "title": "food",
+//         "content": "i like dosa",
+//         "isPublic": false
+//     });
+//     content.save().then(result => {
+//         console.log('Data saved:', result);
+//         res.send("data saved");
+//     })
+//     .catch(error => {
+//         console.error('Error saving data:', error);
+//     });
+// })
 
-app.get('/thoughts', (req, res) => {
-    ThoughtsModel.find()
-        .then((result) => {
-            res.send(result);
-        })
-        .catch(error => {
-            console.error('Error while retrieving data:', error);
-            res.status(500).send('Internal Server Error');
-        });
-});
+// app.get('/thoughts', (req, res) => {
+//     ThoughtsModel.find()
+//         .then((result) => {
+//             res.send(result);
+//         })
+//         .catch(error => {
+//             console.error('Error while retrieving data:', error);
+//             res.status(500).send('Internal Server Error');
+//         });
+// });
