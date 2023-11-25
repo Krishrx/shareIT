@@ -1,49 +1,74 @@
 import { Input,Textarea,Select,Option,Button } from "@material-tailwind/react";
 import axios from "axios";
-import { useState } from "react";
+import { useGlobalState } from './GlobalStateProvider';
+
 function InputBoxes() {
-    const [boxData, setBoxData] = useState({
-        title: '',
-        content: '',
-        isPublic:'',
-    })
+    const { globalState,setGlobalState } = useGlobalState();
+    const { _id, title, content, isPublic,onEdit,totalData } = globalState;
 
     const handleFields = (e) => {
         const { name, value } = e.target;
-        setBoxData({...boxData,[name]:value})
+        setGlobalState({...globalState,[name]:value})
     }
 
     const handleSelect = (value) => {
-        setBoxData({...boxData,isPublic:value})
+        setGlobalState({...globalState,isPublic:value})
     }
 
     const handlePost = () => {
         if (validateFields()) {
             //console.log(boxData);
             const dataToDb = {
-               "title": boxData.title,
-               "content": boxData.content,
-                "isPublic": boxData.isPublic === 'Public' ? true : false
+               "title": title,
+               "content": content,
+                "isPublic": isPublic === 'Public' ? true : false
             }
-            axios.post("http://localhost:8000/thoughts", dataToDb).then((res) => alert('Content added', res)).catch((err) => alert(err));
-            setBoxData({...boxData,
-                title: '',
+            axios.post("http://localhost:8000/thoughts", dataToDb).then((res) => {
+                alert('Content added');
+                const newData = [...globalState.totalData,res.data];
+                setGlobalState({ ...globalState, totalData: newData,title: '',
                 content: '',
-                isPublic:'',
-            })
+                isPublic:'', });
+            }).catch((err) => alert(err));
+            
         }
     }
 
-    // const handleSave = () => {
-        
-    // }
+    const handleSave = () => {
+        if (validateFields()) {
+            //console.log(boxData);
+            const dataToDb = {
+               "title": title,
+               "content": content,
+                "isPublic": isPublic === 'Public' ? true : false
+            }
+            const uri = "http://localhost:8000/thoughts/"+_id;
+            axios.patch(uri, dataToDb).then((res) => {
+                alert('Content updated');
+                const deletedIndex = totalData.findIndex(item => item._id === _id);
+                const updatedData = [
+                    ...totalData.slice(0, deletedIndex),
+                    ...totalData.slice(deletedIndex + 1),
+                    res.data
+                ];
+                setGlobalState({ ...globalState, totalData: updatedData,_id: '', title: '',
+                content: '',
+                isPublic:'',
+                onEdit: false });
+            }).catch((err) => alert(err));
+            
+        }
+    }
 
-    // const handleCancel = () => {
-        
-    // }
+    const handleCancel = () => {
+        setGlobalState({...globalState,_id: '',
+        title: '',
+        content: '',
+        isPublic: '',
+        onEdit:false,})
+    }
 
     const validateFields = () => {
-        const { title, content, isPublic } = boxData;
         if (title.trim().length===0) {
             alert("Title can't be empty")
             return false;
@@ -61,17 +86,18 @@ function InputBoxes() {
 
   return (
     <section className={`flex flex-col justify-between items-center px-10 py-4 space-y-5`}>
-          <Input label="Title" size="lg" color="purple" name="title" value={boxData.title} onChange={handleFields}/>
-        <Textarea label="Write Something..." size="lg" color="purple" name="content" value={boxData.content} onChange={handleFields}/>
-        <Select label="Select Visibility" size="lg" color="purple" name="isPublic" value={boxData.isPublic} onChange={handleSelect}>
+        <Input label="Title" size="lg" color="purple" name="title" value={title} onChange={handleFields}/>
+        <Textarea label="Write Something..." size="lg" color="purple" name="content" value={content} onChange={handleFields}/>
+        <Select label="Select Visibility" size="lg" color="purple" name="isPublic" value={isPublic} onChange={handleSelect}>
         <Option value="Public">Public</Option>
         <Option value="Private">Private</Option>
         </Select>
-        <Button variant="outlined" color="purple" onClick={handlePost}>Post</Button>
-        {/* <div className="space-x-4">
+        
+        {onEdit?(<div className="space-x-4">
             <Button variant="outlined" color="purple" onClick={handleSave}>Save</Button>
             <Button variant="outlined" color="gray" onClick={handleCancel}>Cancel</Button>
-        </div> */}
+        </div>):(<Button variant="outlined" color="purple" onClick={handlePost}>Post</Button>)}
+        
     </section>
   )
 }

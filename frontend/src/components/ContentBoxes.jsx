@@ -1,31 +1,42 @@
 import {Pencil,Trash2} from 'lucide-react'
-import { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useGlobalState } from './GlobalStateProvider';
+
+
 function ContentBoxes() {
+  const { globalState,setGlobalState} = useGlobalState();
+  const { totalData } = globalState;
 
-  const [content, setContent] = useState([]);
-  //const { name } = useGlobalState();
+  const formattedContent = totalData.map((c) => {
 
-  useEffect(() => {
-    axios.get("http://localhost:8000/thoughts").then((res) => setContent(res.data));
-  },[])
-
-  const formattedContent = content.map((c) => {
     const handleEdit = () => {
       const uri = "http://localhost:8000/thoughts/"+c._id;
       axios.get(uri).then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
+        const { _id, title, content, isPublicBool } = res.data;
+        setGlobalState({
+          ...globalState,_id: _id,
+          title: title,
+          content: content,
+          isPublic: isPublicBool ? "Public" : "Private",
+          onEdit: true
+        });
       }).catch((err) => {
         console.log(err);
       })
     }
     const handleDelete = () => {
       const uri = "http://localhost:8000/thoughts/"+c._id;
-      axios.delete(uri).then((res)=>console.log(res.data.message)).catch((err)=>console.log(err))
+      // eslint-disable-next-line no-unused-vars
+      axios.delete(uri).then((res) => {
+        //console.log(res.data.message);
+        alert('deleted successfully!');
+        setGlobalState({ ...globalState, totalData: totalData.filter(item => item._id !== c._id)});
+      }).catch((err)=>console.log(err))
     }
+
     return (
-      <div key={c._id} className="min-w-[500px] w-fit h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
+      <div key={c._id} className="w-full h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
         <h1 className="text-xl">{c.title}</h1>
         <p>{c.content}</p>
         <p className="">Status:<span className="font-semibold">{c.isPublic?'Public':'Private'}</span></p>

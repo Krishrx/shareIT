@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from 'react';
-import { getName } from '../shared/getAndInitialiseData';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { getAllData } from '../shared/getAndInitialiseData';
 
 export const GlobalContext = createContext();
 
@@ -11,8 +11,7 @@ export const useGlobalState = () => {
 function GlobalStateProvider({ children }) {
   
   const [globalState, setGlobalState] = useState({
-    totalData: '',
-    totalDataCount: 0,
+    totalData: [],
     _id: '',
     title: '',
     content: '',
@@ -20,8 +19,21 @@ function GlobalStateProvider({ children }) {
     onEdit:false,
   })
 
+  useEffect(() => {
+    getAllData()
+      .then((data) => {
+        setGlobalState((prevGlobalState) => ({
+          ...prevGlobalState,
+          totalData: data,
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  },[])
+
   return (
-    <GlobalContext.Provider value={globalState}>
+    <GlobalContext.Provider value={{globalState,setGlobalState}}>
         {children}
     </GlobalContext.Provider>
   )
