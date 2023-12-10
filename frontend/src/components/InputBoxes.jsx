@@ -2,11 +2,31 @@ import { Input,Textarea,Select,Option,Button } from "@material-tailwind/react";
 import axios from "axios";
 import { useGlobalState } from '../context/GlobalStateProvider';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useEffect } from "react";
 
 function InputBoxes() {
     const { globalState,setGlobalState } = useGlobalState();
     const { _id, title, content, isPublic,onEdit,totalData } = globalState;
     const { user } = useAuthContext();
+
+    useEffect(() => {
+        if (user) {
+        axios.interceptors.request.use(
+            config => {
+                const authToken = user.token;
+
+                if (authToken) {
+                    config.headers.Authorization = `Bearer ${authToken}`;
+                }
+
+                return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        )
+        }
+    },[])
     
     const handleFields = (e) => {
         const { name, value } = e.target;

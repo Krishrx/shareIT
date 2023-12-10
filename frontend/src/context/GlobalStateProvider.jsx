@@ -11,7 +11,7 @@ export const useGlobalState = () => {
 // eslint-disable-next-line react/prop-types
 function GlobalStateProvider({ children }) {
   const { user } = useAuthContext();
-  
+
   const [globalState, setGlobalState] = useState({
     totalData: [],
     _id: '',
@@ -22,7 +22,8 @@ function GlobalStateProvider({ children }) {
   })
 
   useEffect(() => {
-    getAllData()
+    if (user) {
+      getAllData(user)
       .then((data) => {
         setGlobalState((prevGlobalState) => ({
           ...prevGlobalState,
@@ -32,7 +33,8 @@ function GlobalStateProvider({ children }) {
       .catch((error) => {
         console.error(error);
       });
-  },[])
+    }
+  },[user])
 
   return (
     <GlobalContext.Provider value={{globalState,setGlobalState}}>

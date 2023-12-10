@@ -1,8 +1,22 @@
 import axios from 'axios';
-import { useAuthContext } from '../hooks/useAuthContext';
 
-export const getAllData = async () => {
-    const { user } = useAuthContext();
+export const getAllData = async (user) => {
+    
+    axios.interceptors.request.use(
+        config => {
+            const authToken = user.token;
+
+            if (authToken) {
+                config.headers.Authorization = `Bearer ${authToken}`;
+            }
+
+            return config;
+        },
+        error => {
+            return Promise.reject(error);
+        }
+    )
+
     return new Promise((resolve, reject) => {
         axios.get("http://localhost:8000/api/thoughts")
             .then((res) => {

@@ -1,12 +1,39 @@
-import {Pencil,Trash2} from 'lucide-react'
+import {Pencil,Trash2,Clock3} from 'lucide-react'
 import axios from 'axios';
 import { useGlobalState } from '../context/GlobalStateProvider';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useEffect } from "react";
+import { formatDistanceToNow } from 'date-fns';
 
 function ContentBoxes() {
   const { globalState,setGlobalState} = useGlobalState();
   const { totalData } = globalState;
   const { user } = useAuthContext();
+
+  useEffect(() => {
+        if (user) {
+        axios.interceptors.request.use(
+            config => {
+                const authToken = user.token;
+
+                if (authToken) {
+                    config.headers.Authorization = `Bearer ${authToken}`;
+                }
+
+                return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        )
+        }
+    },[])
+    
+    const formattedDate = (createdAt) => {
+      const distance = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+      return distance;
+    };
+
   const formattedContent = totalData.map((c) => {
 
     const handleEdit = () => {
@@ -39,10 +66,16 @@ function ContentBoxes() {
       <div key={c._id} className="w-full h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
         <h1 className="text-xl">{c.title}</h1>
         <p>{c.content}</p>
-        <p className="">Status:<span className="font-semibold">{c.isPublic?'Public':'Private'}</span></p>
-          <div className='flex justify-end items-center space-x-4 cursor-pointer'>
-            <Pencil onClick={handleEdit}/>
-            <Trash2 onClick={handleDelete}/>
+        <p className="">Status: <span className="font-semibold">{c.isPublic ? 'Public' : 'Private'}</span></p>
+          <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center space-x-1'>
+              <Clock3 size={14}/>
+              <p className='text-xs'>{formattedDate(c.createdAt)}</p>
+            </div>
+            <div className='flex justify-between items-center space-x-4 cursor-pointer'>
+              <Pencil onClick={handleEdit}/>
+              <Trash2 onClick={handleDelete}/>
+            </div>
           </div>
       </div>
     )
