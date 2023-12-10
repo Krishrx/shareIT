@@ -49,7 +49,7 @@ function ContentBoxes() {
   })
 
   return (
-    <section className={`w-full h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5`}>
+    <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
         {formattedContent}
     </section>
   )

@@ -85,7 +85,7 @@ function InputBoxes() {
     }
 
   return (
-    <section className={`flex flex-col justify-between items-center px-10 py-4 space-y-5`}>
+    <section className={`w-10/12 md:w-8/12 flex flex-col justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
         <Input label="Title" size="lg" color="purple" name="title" value={title} onChange={handleFields}/>
         <Textarea label="Write Something..." size="lg" color="purple" name="content" value={content} onChange={handleFields}/>
         <Select label="Select Visibility" size="lg" color="purple" name="isPublic" value={isPublic} onChange={handleSelect}>
