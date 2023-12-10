@@ -1,6 +1,6 @@
 import { Input,Textarea,Select,Option,Button } from "@material-tailwind/react";
 import axios from "axios";
-import { useGlobalState } from './GlobalStateProvider';
+import { useGlobalState } from '../context/GlobalStateProvider';
 
 function InputBoxes() {
     const { globalState,setGlobalState } = useGlobalState();
@@ -23,7 +23,7 @@ function InputBoxes() {
                "content": content,
                 "isPublic": isPublic === 'Public' ? true : false
             }
-            axios.post("http://localhost:8000/thoughts", dataToDb).then((res) => {
+            axios.post("http://localhost:8000/api/thoughts", dataToDb).then((res) => {
                 alert('Content added');
                 const newData = [res.data,...globalState.totalData];
                 setGlobalState({ ...globalState, totalData: newData,title: '',
@@ -42,7 +42,7 @@ function InputBoxes() {
                "content": content,
                 "isPublic": isPublic === 'Public' ? true : false
             }
-            const uri = "http://localhost:8000/thoughts/"+_id;
+            const uri = "http://localhost:8000/api/thoughts/"+_id;
             axios.patch(uri, dataToDb).then((res) => {
                 alert('Content updated');
                 const deletedIndex = totalData.findIndex(item => item._id === _id);

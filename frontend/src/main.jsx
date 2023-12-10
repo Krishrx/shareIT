@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './components/App.jsx'
 import './index.css'
 import './styles/App.css'
-import GlobalStateProvider from './components/GlobalStateProvider.jsx'
+import GlobalStateProvider from './context/GlobalStateProvider.jsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -1,6 +1,6 @@
 import {Pencil,Trash2} from 'lucide-react'
 import axios from 'axios';
-import { useGlobalState } from './GlobalStateProvider';
+import { useGlobalState } from '../context/GlobalStateProvider';
 
 
 function ContentBoxes() {
@@ -10,7 +10,7 @@ function ContentBoxes() {
   const formattedContent = totalData.map((c) => {
 
     const handleEdit = () => {
-      const uri = "http://localhost:8000/thoughts/"+c._id;
+      const uri = "http://localhost:8000/api/thoughts/"+c._id;
       axios.get(uri).then((res) => {
         //console.log(res.data);
         const { _id, title, content, isPublicBool } = res.data;
@@ -26,7 +26,7 @@ function ContentBoxes() {
       })
     }
     const handleDelete = () => {
-      const uri = "http://localhost:8000/thoughts/"+c._id;
+      const uri = "http://localhost:8000/api/thoughts/"+c._id;
       // eslint-disable-next-line no-unused-vars
       axios.delete(uri).then((res) => {
         //console.log(res.data.message);

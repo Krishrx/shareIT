@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const getAllData = async () => {
     return new Promise((resolve, reject) => {
-        axios.get("http://localhost:8000/thoughts")
+        axios.get("http://localhost:8000/api/thoughts")
             .then((res) => {
                 const data = res.data;
                 //console.log(data); 
