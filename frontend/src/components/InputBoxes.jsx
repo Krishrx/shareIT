@@ -25,7 +25,7 @@ function InputBoxes() {
             }
             axios.post("http://localhost:8000/thoughts", dataToDb).then((res) => {
                 alert('Content added');
-                const newData = [...globalState.totalData,res.data];
+                const newData = [res.data,...globalState.totalData];
                 setGlobalState({ ...globalState, totalData: newData,title: '',
                 content: '',
                 isPublic:'', });
@@ -48,8 +48,8 @@ function InputBoxes() {
                 const deletedIndex = totalData.findIndex(item => item._id === _id);
                 const updatedData = [
                     ...totalData.slice(0, deletedIndex),
+                    res.data,
                     ...totalData.slice(deletedIndex + 1),
-                    res.data
                 ];
                 setGlobalState({ ...globalState, totalData: updatedData,_id: '', title: '',
                 content: '',

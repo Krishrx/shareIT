@@ -3,7 +3,7 @@ const ThoughtsModel = require("../models/thoughtsModel");
 
 //get all docs in collection
 const getThoughts = (req, res) => {
-    ThoughtsModel.find()
+    ThoughtsModel.find({}).sort({createdAt:-1})
         .then((result) => {
             res.send(result);
         })
