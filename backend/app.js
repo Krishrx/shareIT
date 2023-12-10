@@ -10,7 +10,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const thoughtsRoutes = require("./routes/thoughtsRoutes")
-const port = 8000;
+const userRoutes = require("./routes/userRoutes")
+const port = process.env.PORT;
 const dbURI = process.env.MONGO_DB_URI;
 
 mongoose.connect(dbURI, {
@@ -24,7 +25,9 @@ mongoose.connect(dbURI, {
     console.log(err);
 });
 
-app.use('/thoughts', thoughtsRoutes);
+app.use('/api/thoughts', thoughtsRoutes);
+
+app.use('/api/users', userRoutes);
 
 // app.post('/', (req, res) => {
 //     console.log(req.body);
