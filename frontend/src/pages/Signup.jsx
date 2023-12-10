@@ -1,6 +1,7 @@
-import { Input,Button } from "@material-tailwind/react";
+import { Input,Button,Typography } from "@material-tailwind/react";
 import { useState } from "react";
-import {Eye,EyeOff} from "lucide-react"
+import { Eye, EyeOff,BadgeInfo } from "lucide-react"
+import validator from 'validator';
 function Signup() {
 
   const [formFields, setFormFields] = useState({
@@ -17,12 +18,20 @@ function Signup() {
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
-    alert(formFields.email + " " + formFields.password)
-    setFormFields({...formFields,
-      email: '',
-      password:''
-    })
-    setPwd('password');
+    const { email, password } = formFields
+    if (validator.isEmail(email) && validator.isStrongPassword(password)) {
+
+      alert(email + " " + password)
+
+      setFormFields({...formFields,
+        email: '',
+        password:''
+      })
+      setPwd('password');
+    }
+    else {
+      alert("Kindly, Enter valid credentials");
+    }
   }
 
   const togglePasswordVisibility = () => {
@@ -35,7 +44,19 @@ function Signup() {
       <h1 className="text-center text-xl font-medium my-5">Sign Up</h1>
       <form className="w-full space-y-8" onSubmit={handleSignupSubmit}>
         <Input type="email" label="Email" size="lg" color="purple" name="email" value={formFields.email} onChange={handleFields} />
-        <Input type={pwd} label="Password" size="lg" color="purple" name="password" value={formFields.password} onChange={handleFields} icon={pwd==='password'?(<EyeOff size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>):(<Eye size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>)} />
+
+        <div>
+          <Input type={pwd} label="Password" size="lg" color="purple" name="password" value={formFields.password} onChange={handleFields} icon={pwd==='password'?(<EyeOff size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>):(<Eye size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>)} />
+          <Typography
+          variant="small"
+          color="gray"
+          className="mt-2 flex items-center gap-1 font-normal"
+        >
+            <BadgeInfo size={30}/>
+            <p>Use at least 8 characters, one uppercase, one lowercase and one number.</p>
+        </Typography>
+        </div>
+
         <div className="mx-auto w-fit">
           <Button type="submit" variant="outlined" color="purple">Sign Up</Button>
         </div>
