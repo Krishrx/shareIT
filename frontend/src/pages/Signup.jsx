@@ -2,7 +2,11 @@ import { Input,Button,Typography } from "@material-tailwind/react";
 import { useState } from "react";
 import { Eye, EyeOff,BadgeInfo } from "lucide-react"
 import validator from 'validator';
+import { useSignup } from "../hooks/useSignUp";
+
 function Signup() {
+
+  const {signup, error, isLoading} = useSignup()
 
   const [formFields, setFormFields] = useState({
     email: '',
@@ -16,12 +20,14 @@ function Signup() {
     setFormFields({...formFields,[name]:value})
   }
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = formFields
+    const { email, password } = formFields;
+
     if (validator.isEmail(email) && validator.isStrongPassword(password)) {
 
-      alert(email + " " + password)
+      //alert(email + " " + password)
+      await signup(email, password);
 
       setFormFields({...formFields,
         email: '',
@@ -53,14 +59,16 @@ function Signup() {
           className="mt-2 flex items-center gap-1 font-normal"
         >
             <BadgeInfo size={30}/>
-            <p>Use at least 8 characters, one uppercase, one lowercase and one number.</p>
+            Use at least 8 characters, one uppercase, one lowercase and one number.
         </Typography>
         </div>
 
         <div className="mx-auto w-fit">
-          <Button type="submit" variant="outlined" color="purple">Sign Up</Button>
+          <Button type="submit" disabled={isLoading} variant="outlined" color="purple">Sign Up</Button>
         </div>
+        
       </form>
+      {error && <p className="text-sm mt-5 px-4 py-3 border-2 border-red-500 bg-white text-red-500 ">{error}</p>}
     </div>
   )
 }

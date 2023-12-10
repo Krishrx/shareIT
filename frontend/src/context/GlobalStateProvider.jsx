@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getAllData } from '../shared/getAndInitialiseData';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export const GlobalContext = createContext();
 
@@ -9,6 +10,7 @@ export const useGlobalState = () => {
 
 // eslint-disable-next-line react/prop-types
 function GlobalStateProvider({ children }) {
+  const { user } = useAuthContext();
   
   const [globalState, setGlobalState] = useState({
     totalData: [],

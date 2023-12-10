@@ -1,12 +1,12 @@
 import {Pencil,Trash2} from 'lucide-react'
 import axios from 'axios';
 import { useGlobalState } from '../context/GlobalStateProvider';
-
+import { useAuthContext } from '../hooks/useAuthContext';
 
 function ContentBoxes() {
   const { globalState,setGlobalState} = useGlobalState();
   const { totalData } = globalState;
-
+  const { user } = useAuthContext();
   const formattedContent = totalData.map((c) => {
 
     const handleEdit = () => {

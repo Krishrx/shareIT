@@ -2,7 +2,11 @@ import { Input,Button } from "@material-tailwind/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react"
 import validator from 'validator';
+import { useLogin } from '../hooks/useLogin';
+
 function Login() {
+
+  const { login, error, isLoading } = useLogin();
 
   const [formFields, setFormFields] = useState({
     email: '',
@@ -16,13 +20,13 @@ function Login() {
     setFormFields({...formFields,[name]:value})
   }
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async(e) => {
     e.preventDefault();
     const { email, password } = formFields
     if (validator.isEmail(email) && validator.isStrongPassword(password)) {
 
-      alert(email + " " + password)
-
+      //alert(email + " " + password)
+      await login(email, password);
       setFormFields({...formFields,
         email: '',
         password:''
@@ -48,9 +52,10 @@ function Login() {
           <Input type={pwd} label="Password" size="lg" color="purple" name="password" value={formFields.password} onChange={handleFields} icon={pwd==='password'?(<EyeOff size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>):(<Eye size={18} onClick={togglePasswordVisibility} className="cursor-pointer"/>)} />
 
         <div className="mx-auto w-fit">
-          <Button type="submit" variant="outlined" color="purple">Login</Button>
+          <Button type="submit" disabled={isLoading} variant="outlined" color="purple">Login</Button>
         </div>
       </form>
+      {error && <p className="text-sm mt-5 px-4 py-3 border-2 border-red-500 bg-white text-red-500 ">{error}</p>}
     </div>
   )
 }

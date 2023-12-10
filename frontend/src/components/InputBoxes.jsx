@@ -1,11 +1,13 @@
 import { Input,Textarea,Select,Option,Button } from "@material-tailwind/react";
 import axios from "axios";
 import { useGlobalState } from '../context/GlobalStateProvider';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 function InputBoxes() {
     const { globalState,setGlobalState } = useGlobalState();
     const { _id, title, content, isPublic,onEdit,totalData } = globalState;
-
+    const { user } = useAuthContext();
+    
     const handleFields = (e) => {
         const { name, value } = e.target;
         setGlobalState({...globalState,[name]:value})

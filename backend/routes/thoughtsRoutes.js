@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const thoughtsController = require('../controllers/thoughtsController')
+const requireAuth = require('../middleware/requireAuth')
+
+//middleware to authenticate user
+router.use(requireAuth);
 
 //get all docs in collection
 router.get('/', thoughtsController.getThoughts)
