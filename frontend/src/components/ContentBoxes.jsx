@@ -11,6 +11,7 @@ function ContentBoxes() {
   const { user } = useAuthContext();
 
   const [axiosHeader, setAxiosHeader] = useState(null);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
         if (user) {
@@ -21,20 +22,34 @@ function ContentBoxes() {
             },
           };
           setAxiosHeader(axiosConfig);
+
+          axios.post('http://localhost:8000/api/users/getid', { email: user.email },axiosConfig)
+          .then(response => {
+            setUserId(response.data.id);
+          })
+          .catch(error => {
+              console.error(error.response.data);
+          });
+
         }
         else {
           setAxiosHeader(null);
+          setUserId('')
         }
   },[user])
     
   
     
-    const formattedDate = (createdAt) => {
-      const distance = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
-      return distance;
-    };
+  const formattedDate = (createdAt) => {
+    const distance = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+    return distance;
+  };
 
-  const formattedContent = totalData.map((c) => {
+  const userDocuments = totalData.filter((doc) => doc.user_id === userId);
+  const publicDocuments = totalData.filter((doc) => doc.isPublic && doc.user_id !== userId);
+  
+
+  const formattedContentUser = userDocuments.map((c) => {
 
     const handleEdit = () => {
       const uri = "http://localhost:8000/api/thoughts/"+c._id;
@@ -81,10 +96,35 @@ function ContentBoxes() {
     )
   })
 
+
+  const formattedContentPublic = publicDocuments.map((c) => {
+
+    return (
+      <div key={c._id} className="w-full h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
+        <h1 className="text-xl">{c.title}</h1>
+        <p>{c.content}</p>
+        <p className="">Status: <span className="font-semibold">{c.isPublic ? 'Public' : 'Private'}</span></p>
+          <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center space-x-1'>
+              <Clock3 size={14}/>
+              <p className='text-xs'>{formattedDate(c.createdAt)}</p>
+            </div>
+          </div>
+      </div>
+    )
+  })
+
   return (
-    <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
-        {formattedContent}
+    <>
+      <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
+      <h1 className='text-2xl font-medium'>Your Posts</h1>
+        {formattedContentUser}
+      </section>
+      <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
+      <h1 className='text-2xl font-medium'>Other Posts</h1>
+        {formattedContentPublic}
     </section>
+    </>
   )
 }
 

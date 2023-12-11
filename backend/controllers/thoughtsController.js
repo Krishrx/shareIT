@@ -3,6 +3,7 @@ const ThoughtsModel = require("../models/thoughtsModel");
 
 //get all docs in collection
 const getThoughts = (req, res) => {
+    //const user_id = req.user._id;
     ThoughtsModel.find({}).sort({createdAt:-1})
         .then((result) => {
             res.send(result);
