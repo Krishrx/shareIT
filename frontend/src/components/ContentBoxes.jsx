@@ -1,4 +1,4 @@
-import {Pencil,Trash2,Clock3} from 'lucide-react'
+import {Pencil,Trash2,Clock3,Globe,Lock} from 'lucide-react'
 import axios from 'axios';
 import { useGlobalState } from '../context/GlobalStateProvider';
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -79,17 +79,23 @@ function ContentBoxes() {
 
     return (
       <div key={c._id} className="w-full h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
-        <h1 className="text-xl">{c.title}</h1>
-        <p>{c.content}</p>
-        <p className="">Status: <span className="font-semibold">{c.isPublic ? 'Public' : 'Private'}</span></p>
+        <div className='flex items-center py-2 space-x-2'>
+          <p className='bg-white w-fit text-accent font-bold px-4 py-2 rounded-full'>{user.email.charAt(0).toUpperCase()}</p>
+          <p>{user.email}</p>
+        </div>
+        <div className='flex justify-between items-center py-4'>
+          <h1 className="text-xl uppercase font-medium">{c.title}</h1>
+          <p className="font-semibold">{c.isPublic ? <Globe size={20}/> : <Lock size={20}/>}</p>
+        </div>
+        <p className='pb-4'>{c.content}</p>
           <div className='flex justify-between items-center'>
             <div className='flex justify-between items-center space-x-1'>
               <Clock3 size={14}/>
               <p className='text-xs'>{formattedDate(c.createdAt)}</p>
             </div>
-            <div className='flex justify-between items-center space-x-4 cursor-pointer'>
-              <Pencil onClick={handleEdit}/>
-              <Trash2 onClick={handleDelete}/>
+            <div className='flex justify-between items-center space-x-2 cursor-pointer'>
+              <Pencil size={20} onClick={handleEdit}/>
+              <Trash2 size={20} onClick={handleDelete}/>
             </div>
           </div>
       </div>
@@ -101,9 +107,15 @@ function ContentBoxes() {
 
     return (
       <div key={c._id} className="w-full h-fit bg-accent flex flex-col justify-center px-4 py-4 text-white rounded-lg space-y-2">
-        <h1 className="text-xl">{c.title}</h1>
-        <p>{c.content}</p>
-        <p className="">Status: <span className="font-semibold">{c.isPublic ? 'Public' : 'Private'}</span></p>
+        <div className='flex items-center py-2 space-x-2'>
+          <p className='bg-white w-fit text-accent font-bold px-4 py-2 rounded-full'>{'A'}</p>
+          <p>{'Anonymous User'}</p>
+        </div>
+        <div className='flex justify-between items-center py-4'>
+          <h1 className="text-xl uppercase font-medium">{c.title}</h1>
+          <p className="font-semibold">{c.isPublic ? <Globe size={20}/> : <Lock size={20}/>}</p>
+        </div>
+        <p className='pb-4'>{c.content}</p>
           <div className='flex justify-between items-center'>
             <div className='flex justify-between items-center space-x-1'>
               <Clock3 size={14}/>
@@ -121,7 +133,7 @@ function ContentBoxes() {
         {formattedContentUser}
       </section>
       <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
-      <h1 className='text-2xl font-medium'>Other Posts</h1>
+      <h1 className='text-2xl font-medium'>Public Feed</h1>
         {formattedContentPublic}
     </section>
     </>
