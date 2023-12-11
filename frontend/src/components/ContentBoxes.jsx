@@ -2,7 +2,7 @@ import {Pencil,Trash2,Clock3} from 'lucide-react'
 import axios from 'axios';
 import { useGlobalState } from '../context/GlobalStateProvider';
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
 
 function ContentBoxes() {
@@ -10,24 +10,24 @@ function ContentBoxes() {
   const { totalData } = globalState;
   const { user } = useAuthContext();
 
+  const [axiosHeader, setAxiosHeader] = useState(null);
+
   useEffect(() => {
         if (user) {
-        axios.interceptors.request.use(
-            config => {
-                const authToken = user.token;
-
-                if (authToken) {
-                    config.headers.Authorization = `Bearer ${authToken}`;
-                }
-
-                return config;
+         const axiosConfig = {
+            headers: {
+                Authorization: user ? `Bearer ${user.token}` : '',
+                'Content-Type': 'application/json',
             },
-            error => {
-                return Promise.reject(error);
-            }
-        )
+          };
+          setAxiosHeader(axiosConfig);
         }
-    },[])
+        else {
+          setAxiosHeader(null);
+        }
+  },[user])
+    
+  
     
     const formattedDate = (createdAt) => {
       const distance = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
@@ -38,7 +38,7 @@ function ContentBoxes() {
 
     const handleEdit = () => {
       const uri = "http://localhost:8000/api/thoughts/"+c._id;
-      axios.get(uri).then((res) => {
+      axios.get(uri,axiosHeader).then((res) => {
         //console.log(res.data);
         const { _id, title, content, isPublicBool } = res.data;
         setGlobalState({
@@ -55,7 +55,7 @@ function ContentBoxes() {
     const handleDelete = () => {
       const uri = "http://localhost:8000/api/thoughts/"+c._id;
       // eslint-disable-next-line no-unused-vars
-      axios.delete(uri).then((res) => {
+      axios.delete(uri,axiosHeader).then((res) => {
         //console.log(res.data.message);
         alert('deleted successfully!');
         setGlobalState({ ...globalState, totalData: totalData.filter(item => item._id !== c._id)});

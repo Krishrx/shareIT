@@ -39,7 +39,12 @@ const getThoughtsById =  async (req, res) => {
 //add a doc to collection
 const createThought = async (req, res) => {
     try {
-        const thought = new ThoughtsModel(req.body);
+        const user_id = req.user._id;
+        const thoughtData = {
+            ...req.body,
+            user_id: user_id,
+        };
+        const thought = new ThoughtsModel(thoughtData);
         const newThought = await thought.save();
         res.status(201).json(newThought);
     }

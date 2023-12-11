@@ -2,31 +2,29 @@ import { Input,Textarea,Select,Option,Button } from "@material-tailwind/react";
 import axios from "axios";
 import { useGlobalState } from '../context/GlobalStateProvider';
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
 function InputBoxes() {
     const { globalState,setGlobalState } = useGlobalState();
     const { _id, title, content, isPublic,onEdit,totalData } = globalState;
     const { user } = useAuthContext();
 
+    const [axiosHeader, setAxiosHeader] = useState(null);
+
     useEffect(() => {
         if (user) {
-        axios.interceptors.request.use(
-            config => {
-                const authToken = user.token;
-
-                if (authToken) {
-                    config.headers.Authorization = `Bearer ${authToken}`;
-                }
-
-                return config;
+         const axiosConfig = {
+            headers: {
+                Authorization: user ? `Bearer ${user.token}` : '',
+                'Content-Type': 'application/json',
             },
-            error => {
-                return Promise.reject(error);
-            }
-        )
+          };
+          setAxiosHeader(axiosConfig);
         }
-    },[])
+        else {
+          setAxiosHeader(null);
+        }
+    },[user])
     
     const handleFields = (e) => {
         const { name, value } = e.target;
@@ -45,7 +43,7 @@ function InputBoxes() {
                "content": content,
                 "isPublic": isPublic === 'Public' ? true : false
             }
-            axios.post("http://localhost:8000/api/thoughts", dataToDb).then((res) => {
+            axios.post("http://localhost:8000/api/thoughts", dataToDb,axiosHeader).then((res) => {
                 alert('Content added');
                 const newData = [res.data,...globalState.totalData];
                 setGlobalState({ ...globalState, totalData: newData,title: '',
@@ -65,7 +63,7 @@ function InputBoxes() {
                 "isPublic": isPublic === 'Public' ? true : false
             }
             const uri = "http://localhost:8000/api/thoughts/"+_id;
-            axios.patch(uri, dataToDb).then((res) => {
+            axios.patch(uri, dataToDb,axiosHeader).then((res) => {
                 alert('Content updated');
                 const deletedIndex = totalData.findIndex(item => item._id === _id);
                 const updatedData = [
