@@ -52,29 +52,33 @@ function ContentBoxes() {
   const formattedContentUser = userDocuments.map((c) => {
 
     const handleEdit = () => {
-      const uri = "http://localhost:8000/api/thoughts/"+c._id;
-      axios.get(uri,axiosHeader).then((res) => {
-        //console.log(res.data);
-        const { _id, title, content, isPublicBool } = res.data;
-        setGlobalState({
-          ...globalState,_id: _id,
-          title: title,
-          content: content,
-          isPublic: isPublicBool ? "Public" : "Private",
-          onEdit: true
-        });
-      }).catch((err) => {
-        console.log(err);
-      })
+      if (!globalState.onEdit) {
+          const uri = "http://localhost:8000/api/thoughts/"+c._id;
+        axios.get(uri,axiosHeader).then((res) => {
+          //console.log(res.data);
+          const { _id, title, content, isPublicBool } = res.data;
+          setGlobalState({
+            ...globalState,_id: _id,
+            title: title,
+            content: content,
+            isPublic: isPublicBool ? "Public" : "Private",
+            onEdit: true
+          });
+        }).catch((err) => {
+          console.log(err);
+        })
+      }
     }
     const handleDelete = () => {
-      const uri = "http://localhost:8000/api/thoughts/"+c._id;
-      // eslint-disable-next-line no-unused-vars
-      axios.delete(uri,axiosHeader).then((res) => {
-        //console.log(res.data.message);
-        alert('deleted successfully!');
-        setGlobalState({ ...globalState, totalData: totalData.filter(item => item._id !== c._id)});
-      }).catch((err)=>console.log(err))
+      if (!globalState.onEdit) {
+          const uri = "http://localhost:8000/api/thoughts/"+c._id;
+          // eslint-disable-next-line no-unused-vars
+          axios.delete(uri,axiosHeader).then((res) => {
+            //console.log(res.data.message);
+            alert('deleted successfully!');
+            setGlobalState({ ...globalState, totalData: totalData.filter(item => item._id !== c._id)});
+          }).catch((err)=>console.log(err))
+      }
     }
 
     return (
@@ -94,8 +98,8 @@ function ContentBoxes() {
               <p className='text-xs'>{formattedDate(c.createdAt)}</p>
             </div>
             <div className='flex justify-between items-center space-x-2 cursor-pointer'>
-              <Pencil size={20} onClick={handleEdit}/>
-              <Trash2 size={20} onClick={handleDelete}/>
+              <Pencil size={20} onClick={handleEdit} style={{ opacity: globalState.onEdit ? 0.5 : 1 }}/>
+              <Trash2 size={20} onClick={handleDelete} style={{ opacity: globalState.onEdit ? 0.5 : 1 }}/>
             </div>
           </div>
       </div>
@@ -129,12 +133,28 @@ function ContentBoxes() {
   return (
     <>
       <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
-      <h1 className='text-2xl font-medium'>Your Posts</h1>
-        {formattedContentUser}
+        {formattedContentUser.length===0 ?
+          (<div className='flex flex-col justify-center items-center'>
+            <h1 className='font-medium text-xl'>Start posting your Thoughts!</h1>
+            <img className='w-80 h-80' src="../../public/share_thoughts.svg" alt="share png" />
+          </div>):
+            (<>
+              <h1 className='text-2xl font-medium'>Your Posts</h1>
+              {formattedContentUser}
+            </>)
+          }
       </section>
       <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
-      <h1 className='text-2xl font-medium'>Public Feed</h1>
-        {formattedContentPublic}
+        <h1 className='text-2xl font-medium'>Public Feed</h1>
+        {formattedContentPublic.length===0 ?
+          (<div className='flex flex-col justify-center items-center space-y-5'>
+            <h1 className='font-medium text-xl'>No public posts available :(</h1>
+            <img className='h-56' src="../../public/public_posts_searching.svg" alt="share png" />
+          </div>):
+            (<>
+              {formattedContentPublic}
+            </>)
+          }
     </section>
     </>
   )
