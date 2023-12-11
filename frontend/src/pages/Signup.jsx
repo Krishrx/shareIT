@@ -46,7 +46,7 @@ function Signup() {
 
 
   return (
-    <div className="w-8/12 md:w-4/12 py-20 px-20 mx-auto bg-gray-100 rounded-xl my-9">
+    <div className="w-11/12 md:w-4/12 py-20 px-20 mx-auto bg-darkPrimary/30 rounded-xl my-9">
       <h1 className="text-center text-xl font-medium my-5">Sign Up</h1>
       <form className="w-full space-y-8" onSubmit={handleSignupSubmit}>
         <Input type="email" label="Email" size="lg" color="purple" name="email" value={formFields.email} onChange={handleFields} />

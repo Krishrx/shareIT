@@ -56,14 +56,16 @@ function ContentBoxes() {
           const uri = "http://localhost:8000/api/thoughts/"+c._id;
         axios.get(uri,axiosHeader).then((res) => {
           //console.log(res.data);
-          const { _id, title, content, isPublicBool } = res.data;
-          setGlobalState({
-            ...globalState,_id: _id,
+          const { _id, title, content, isPublic } = res.data;
+          setGlobalState((prevState) => ({
+            ...prevState,
+            _id: _id,
             title: title,
             content: content,
-            isPublic: isPublicBool ? "Public" : "Private",
-            onEdit: true
-          });
+            isPublic: isPublic ? "Public" : "Private",
+            onEdit: true,
+          }));
+          
         }).catch((err) => {
           console.log(err);
         })
@@ -132,7 +134,7 @@ function ContentBoxes() {
 
   return (
     <>
-      <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
+      <section className={`w-11/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
         {formattedContentUser.length===0 ?
           (<div className='flex flex-col justify-center items-center'>
             <h1 className='font-medium text-xl'>Start posting your Thoughts!</h1>
@@ -144,7 +146,7 @@ function ContentBoxes() {
             </>)
           }
       </section>
-      <section className={`w-10/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
+      <section className={`w-11/12 md:w-8/12 h-full flex flex-col flex-wrap justify-between items-center px-10 py-4 space-y-5 mx-auto`}>
         <h1 className='text-2xl font-medium'>Public Feed</h1>
         {formattedContentPublic.length===0 ?
           (<div className='flex flex-col justify-center items-center space-y-5'>
