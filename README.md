@@ -1,5 +1,6 @@
 # ShareIT
 ShareIt is a MERN (MongoDB, Express.js, React, Node.js) stack application that allows users to create and share content with a title. Users have the option to make their content public for everyone to view or keep it private.
+
 You can view the app demo [@Youtube.](https://youtu.be/CermWRXg6wM?si=GmGdrnYHi8iaz5hG)
 
 ## Features
